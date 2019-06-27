@@ -51,7 +51,7 @@ class GUI extends Thread
 
     public GUI(String filename, long filesize, String url,
                AtomicLong downloaded, DownloadGUIThread[] downloadGUIThreads,
-               AtomicBoolean hasCompleted, AtomicBoolean hasJoined)
+               AtomicBoolean hasCompleted, AtomicBoolean hasJoined, AtomicBoolean hasCancelled)
     {
         this.filename = new File(filename).getName();
         this.filesize = filesize;
@@ -83,6 +83,8 @@ class GUI extends Thread
             {
                 downloadGUIThread.stopDownloading();
             }
+
+            hasCancelled.set(true);
         });
         cancelButton.setSize(100, 28);
         cancelButton.setBounds(480, 83, 100, 28);
@@ -95,6 +97,7 @@ class GUI extends Thread
         {
             @Override public void windowClosing(WindowEvent e)
             {
+                hasCancelled.set(true);
                 for (DownloadGUIThread downloadGUIThread: downloadGUIThreads)
                 {
                     downloadGUIThread.stopDownloading();
@@ -141,11 +144,6 @@ class GUI extends Thread
         jFrame.dispose();
         System.out.println("Ended GUI...");
     }
-
-    synchronized JFrame getFrame()
-    {
-        return jFrame;
-    }
 }
 
 public class DownloaderGUI
@@ -154,7 +152,6 @@ public class DownloaderGUI
     private String filename;
     private long filesize;
     private List<HttpURLConnection> links;
-    private final static int BUFFER_SIZE = 32 * 1024 * 1024;
 
     public DownloaderGUI(String url, String filename, long filesize, List<HttpURLConnection> links)
     {
@@ -180,6 +177,7 @@ public class DownloaderGUI
         }
 
         AtomicLong downloaded = new AtomicLong(0);
+        AtomicBoolean hasCancelled = new AtomicBoolean(false);
         AtomicBoolean hasCompleted = new AtomicBoolean(true);
         AtomicBoolean hasJoined = new AtomicBoolean(false);
 
@@ -190,7 +188,7 @@ public class DownloaderGUI
             downloaderThreads[i].start();
         }
 
-        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads, hasCompleted, hasJoined);
+        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads, hasCompleted, hasJoined, hasCancelled);
         gui.start();
 
         for (int i = 0, size = links.size(); i < size; i++)
@@ -212,11 +210,13 @@ public class DownloaderGUI
                 new File(filePartsName.get(i)).delete();
             }
 
-            JOptionPane.showMessageDialog(null,
-                                          String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
-                                          "Connection Error!",
-                                          JOptionPane.ERROR_MESSAGE,
-                                          null);
+            if (hasCancelled.get() == false)
+            {
+                JOptionPaneWithFrame.showMessageDialog(String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
+                                                       "Connection Error!",
+                                                       JOptionPane.ERROR_MESSAGE,
+                                                       null);
+            }
         }
         else
         {
@@ -224,26 +224,7 @@ public class DownloaderGUI
             {
                 try
                 {
-                    FileOutputStream fileOutputStream = new FileOutputStream(filename);
-                    byte[] buffer = new byte[BUFFER_SIZE];
-                    for (int i = 0, size = links.size(); i < size; i++)
-                    {
-                        FileInputStream fileInputStream = new FileInputStream(filePartsName.get(i));
-                        while (true)
-                        {
-                            int read = fileInputStream.read(buffer);
-                            if (read == -1)
-                            {
-                                break;
-                            }
-
-                            fileOutputStream.write(buffer, 0, read);
-                        }
-                        fileInputStream.close();
-
-                        new File(filePartsName.get(i)).delete();
-                    }
-                    fileOutputStream.close();
+                    CombineFiles.combine(filePartsName, filename, true);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -265,16 +246,15 @@ public class DownloaderGUI
                 new File(filePartsName.get(0)).renameTo(oldFile);
             }
 
-            Object[] buttonText = { "Open", "Open Directory", "Close" };
             hasJoined.set(true);
-            int result = JOptionPane.showOptionDialog(null,
-                                                      String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
-                                                      "Downloading completed!",
-                                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                                      JOptionPane.PLAIN_MESSAGE,
-                                                      null,
-                                                      buttonText,
-                                                      buttonText[2]);
+            Object[] buttonText = { "Open", "Open Directory", "Close" };
+            int result = JOptionPaneWithFrame.showOptionDialog(String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
+                                                               "Downloading completed!",
+                                                               JOptionPane.YES_NO_CANCEL_OPTION,
+                                                               JOptionPane.PLAIN_MESSAGE,
+                                                               null,
+                                                               buttonText,
+                                                               buttonText[2]);
             if (result == JOptionPane.YES_OPTION)
             {
                 try
@@ -283,28 +263,20 @@ public class DownloaderGUI
                 }
                 catch (IOException e)
                 {
-                    JOptionPane.showMessageDialog(gui.getFrame(), e.getMessage(),
-                                                  "Exception...", JOptionPane.ERROR_MESSAGE);
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage());
                 }
             }
             else if (result == JOptionPane.NO_OPTION)
             {
                 try
                 {
-                    Desktop.getDesktop().browseFileDirectory(new File(filename));
+                    BrowseToFile.browseTo(filename);
                 }
-                catch (UnsupportedOperationException e)
+                catch (IOException e)
                 {
-                    try
-                    {
-                        Desktop.getDesktop().open(new File(filename).getParentFile());
-                    }
-                    catch (IOException e1)
-                    {
-                        JOptionPane.showMessageDialog(gui.getFrame(), e1.getMessage(),
-                                                      "Exception...", JOptionPane.ERROR_MESSAGE);
-                    }
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage());
                 }
+
             }
         }
 
