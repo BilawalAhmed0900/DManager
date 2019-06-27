@@ -1,5 +1,7 @@
 package com.BilawalAhmed0900;
 
+import javax.net.ssl.SSLException;
+import javax.swing.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -40,6 +42,7 @@ public class DownloaderThread extends Thread
         catch (IOException e)
         {
             e.printStackTrace();
+            return null;
         }
 
         return result;
@@ -60,7 +63,15 @@ public class DownloaderThread extends Thread
 
         String url = urlConnection.getURL().toString();
         int position = url.lastIndexOf("/");
-        String fileName = url.substring(position + 1);
+
+        int positionAnd = url.indexOf("&", position);
+        int positionQuestionMark = url.indexOf("?", position);
+
+        int tillPosition = Math.min(positionAnd, positionQuestionMark);
+        if (tillPosition == -1)
+            tillPosition = url.length();
+
+        String fileName = url.substring(position + 1, tillPosition);
         fileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
 
         return fileName;
@@ -178,6 +189,14 @@ public class DownloaderThread extends Thread
         System.out.println(map);
         String finalURL = (map.get("finalUrl").equals("")) ? map.get("url") : map.get("finalUrl");
         List<HttpURLConnection> arrayList = openMainConnection(finalURL, map.get("cookies"));
+        if (arrayList == null)
+        {
+            JOptionPane.showMessageDialog(null,
+                                          "<html>Error while connection to<br>\"" + finalURL + "\"</html>", "Error",
+                                          JOptionPane.ERROR_MESSAGE, null);
+            return;
+        }
+
         if (arrayList.size() != 1)
         {
             return;
@@ -196,11 +215,12 @@ public class DownloaderThread extends Thread
         }
 
         if (totalContentLength != -1
+                && totalContentLength > 1024 * 1024
                 && arrayList.get(0).getHeaderField("Accept-Ranges") != null
                 && arrayList.get(0).getHeaderField("Accept-Ranges").equals("bytes"))
         {
             WaitingBox waitingBox = new WaitingBox("Connecting to " + arrayList.get(0).getURL().toString(),
-                    "Establishing connection to the server", 300, 100);
+                    "Establishing connection to the server", 500, 100);
             List<HttpURLConnection> seekAbleList = openLinks(finalURL, map.get("cookies"));
             if (seekAbleList.size() != 0)
             {

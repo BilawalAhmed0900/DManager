@@ -60,7 +60,7 @@ public class ConfirmationBox
                 SwingUtilities.invokeLater(() ->
                 {
                     JFileChooser jFileChooser = new JFileChooser(DOWNLOAD_DIRECTORY);
-                    jFileChooser.setSelectedFile(new File(this.fileName));
+                    jFileChooser.setSelectedFile(new File(filenameField.getText()));
 
                     int result = jFileChooser.showSaveDialog(jFrame);
                     if (result == JFileChooser.APPROVE_OPTION)
@@ -101,6 +101,7 @@ public class ConfirmationBox
 
         jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         jFrame.setVisible(true);
+        jFrame.getRootPane().setDefaultButton(downloadButton);
 
     /*
         When "X" button on top-right/left is clicked

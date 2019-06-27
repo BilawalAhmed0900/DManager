@@ -13,6 +13,8 @@ public class Main
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
 
+        System.setProperty("jsse.enableSNIExtension", "false");
+
         try
         {
             ServerSocket serverSocket = new ServerSocket(SERVER_SOCKET_PORT);
@@ -35,7 +37,8 @@ public class Main
                     break;
                 }
             }
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             e.printStackTrace();
         }

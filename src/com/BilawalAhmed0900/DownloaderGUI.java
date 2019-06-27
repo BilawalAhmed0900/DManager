@@ -43,18 +43,22 @@ class GUI extends Thread
     private long filesize;
     private String url;
     private AtomicLong downloaded;
-    private DownloadGUIThread[] downloadGUIThreads;
+    private AtomicBoolean hasCompleted;
+    private AtomicBoolean hasJoined;
 
     private JFrame jFrame;
     private JTextArea jTextArea;
 
-    public GUI(String filename, long filesize, String url, AtomicLong downloaded, DownloadGUIThread[] downloadGUIThreads)
+    public GUI(String filename, long filesize, String url,
+               AtomicLong downloaded, DownloadGUIThread[] downloadGUIThreads,
+               AtomicBoolean hasCompleted, AtomicBoolean hasJoined)
     {
         this.filename = new File(filename).getName();
         this.filesize = filesize;
         this.url = url;
         this.downloaded = downloaded;
-        this.downloadGUIThreads = downloadGUIThreads;
+        this.hasCompleted = hasCompleted;
+        this.hasJoined = hasJoined;
 
         jFrame = new JFrame("Downloading \"" + new File(filename).getName() + "\"");
         jFrame.setSize(600, 155);
@@ -110,12 +114,7 @@ class GUI extends Thread
         String filesizeString = ((filesize == -1) ? "(UNKNOWN)" : BytesToMiBGiBTiB.normalize(filesize));
         while (true)
         {
-            boolean isWorking = false;
-            for (int i = 0; i < downloadGUIThreads.length; i++)
-            {
-                isWorking = isWorking || downloadGUIThreads[i].isAlive();
-            }
-
+            boolean isWorking = !hasJoined.get() && hasCompleted.get();
             if (!isWorking)
             {
                 break;
@@ -141,6 +140,11 @@ class GUI extends Thread
 
         jFrame.dispose();
         System.out.println("Ended GUI...");
+    }
+
+    synchronized JFrame getFrame()
+    {
+        return jFrame;
     }
 }
 
@@ -177,6 +181,7 @@ public class DownloaderGUI
 
         AtomicLong downloaded = new AtomicLong(0);
         AtomicBoolean hasCompleted = new AtomicBoolean(true);
+        AtomicBoolean hasJoined = new AtomicBoolean(false);
 
         final DownloadGUIThread[] downloaderThreads = new DownloadGUIThread[links.size()];
         for (int i = 0, size = links.size(); i < size; i++)
@@ -185,7 +190,7 @@ public class DownloaderGUI
             downloaderThreads[i].start();
         }
 
-        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads);
+        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads, hasCompleted, hasJoined);
         gui.start();
 
         for (int i = 0, size = links.size(); i < size; i++)
@@ -200,6 +205,109 @@ public class DownloaderGUI
             }
         }
 
+        if (hasCompleted.get() == false)
+        {
+            for (int i = 0, size = links.size(); i < size; i++)
+            {
+                new File(filePartsName.get(i)).delete();
+            }
+
+            JOptionPane.showMessageDialog(gui.getFrame(),
+                                          String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
+                                          "Connection Error!",
+                                          JOptionPane.ERROR_MESSAGE,
+                                          null);
+        }
+        else
+        {
+            if (links.size() > 1)
+            {
+                try
+                {
+                    FileOutputStream fileOutputStream = new FileOutputStream(filename);
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    for (int i = 0, size = links.size(); i < size; i++)
+                    {
+                        FileInputStream fileInputStream = new FileInputStream(filePartsName.get(i));
+                        while (true)
+                        {
+                            int read = fileInputStream.read(buffer);
+                            if (read == -1)
+                            {
+                                break;
+                            }
+
+                            fileOutputStream.write(buffer, 0, read);
+                        }
+                        fileInputStream.close();
+
+                        new File(filePartsName.get(i)).delete();
+                    }
+                    fileOutputStream.close();
+                }
+                catch (FileNotFoundException e)
+                {
+                    // e.printStackTrace();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            else if (links.size() == 1)
+            {
+                File oldFile = new File(filename);
+                if (oldFile.exists() && !oldFile.isDirectory())
+                {
+                    oldFile.delete();
+                }
+
+                new File(filePartsName.get(0)).renameTo(oldFile);
+            }
+
+            Object[] buttonText = { "Open", "Open Directory", "Close" };
+            hasJoined.set(true);
+            int result = JOptionPane.showOptionDialog(gui.getFrame(),
+                                                      String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
+                                                      "Downloading completed!",
+                                                      JOptionPane.YES_NO_CANCEL_OPTION,
+                                                      JOptionPane.PLAIN_MESSAGE,
+                                                      null,
+                                                      buttonText,
+                                                      buttonText[2]);
+            if (result == JOptionPane.YES_OPTION)
+            {
+                try
+                {
+                    Desktop.getDesktop().open(new File(filename));
+                }
+                catch (IOException e)
+                {
+                    JOptionPane.showMessageDialog(gui.getFrame(), e.getMessage(),
+                                                  "Exception...", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            else if (result == JOptionPane.NO_OPTION)
+            {
+                try
+                {
+                    Desktop.getDesktop().browseFileDirectory(new File(filename));
+                }
+                catch (UnsupportedOperationException e)
+                {
+                    try
+                    {
+                        Desktop.getDesktop().open(new File(filename).getParentFile());
+                    }
+                    catch (IOException e1)
+                    {
+                        JOptionPane.showMessageDialog(gui.getFrame(), e1.getMessage(),
+                                                      "Exception...", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }
+
         try
         {
             gui.join();
@@ -208,73 +316,5 @@ public class DownloaderGUI
         {
             e.printStackTrace();
         }
-
-        if (hasCompleted.get() == false)
-        {
-            for (int i = 0, size = links.size(); i < size; i++)
-            {
-                new File(filePartsName.get(i)).delete();
-            }
-
-            WaitingBox waitingBox = new WaitingBox("Connection Error!",
-                    String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
-                    500, 200);
-            waitingBox.waitForClosing();
-        }
-        else if (links.size() > 1)
-        {
-            try
-            {
-                FileOutputStream fileOutputStream = new FileOutputStream(filename);
-                byte[] buffer = new byte[BUFFER_SIZE];
-                for (int i = 0, size = links.size(); i < size; i++)
-                {
-                    FileInputStream fileInputStream = new FileInputStream(filePartsName.get(i));
-                    while (true)
-                    {
-                        int read = fileInputStream.read(buffer);
-                        if (read == -1)
-                        {
-                            break;
-                        }
-
-                        fileOutputStream.write(buffer, 0, read);
-                    }
-                    fileInputStream.close();
-
-                    new File(filePartsName.get(i)).delete();
-                }
-                fileOutputStream.close();
-            }
-            catch (FileNotFoundException e)
-            {
-                // e.printStackTrace();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-
-            WaitingBox waitingBox = new WaitingBox("Downloading completed!",
-                    String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
-                    500, 200);
-            waitingBox.waitForClosing();
-        }
-        else if (links.size() == 1)
-        {
-            File oldFile = new File(filename);
-            if (oldFile.exists() && !oldFile.isDirectory())
-            {
-                oldFile.delete();
-            }
-
-            new File(filePartsName.get(0)).renameTo(oldFile);
-
-            WaitingBox waitingBox = new WaitingBox("Downloading completed!",
-                    String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
-                    500, 200);
-            waitingBox.waitForClosing();
-        }
-
     }
 }
