@@ -212,7 +212,7 @@ public class DownloaderGUI
                 new File(filePartsName.get(i)).delete();
             }
 
-            JOptionPane.showMessageDialog(gui.getFrame(),
+            JOptionPane.showMessageDialog(null,
                                           String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
                                           "Connection Error!",
                                           JOptionPane.ERROR_MESSAGE,
@@ -267,7 +267,7 @@ public class DownloaderGUI
 
             Object[] buttonText = { "Open", "Open Directory", "Close" };
             hasJoined.set(true);
-            int result = JOptionPane.showOptionDialog(gui.getFrame(),
+            int result = JOptionPane.showOptionDialog(null,
                                                       String.format("<html>Downloading completed of<br>\"%s\"</html>", filename),
                                                       "Downloading completed!",
                                                       JOptionPane.YES_NO_CANCEL_OPTION,
