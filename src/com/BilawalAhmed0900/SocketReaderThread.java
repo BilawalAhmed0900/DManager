@@ -1,5 +1,9 @@
 package com.BilawalAhmed0900;
 
+/*
+    A Thread Class which reads from WebSocket and start a downloading thread
+    Just a thread wrapper above WebSocket
+ */
 public class SocketReaderThread extends Thread
 {
     private WebSocket webSocket;

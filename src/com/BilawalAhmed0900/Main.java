@@ -1,7 +1,10 @@
 package com.BilawalAhmed0900;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.*;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 public class Main
 {
@@ -9,12 +12,32 @@ public class Main
 
     public static void main(String[] args)
     {
+        /*
+            Cookie Manager for cookie handling of UrlConnection's
+         */
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
 
-        System.setProperty("jsse.enableSNIExtension", "false");
+        /*
+            Turning off HTTPS SSL security
+         */
+        try
+        {
+            HttpsURLConnection.setDefaultSSLSocketFactory(RelaxedSSLContext.getInstance().getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(RelaxedSSLContext.allHostsValid);
 
+            System.setProperty("jsse.enableSNIExtension", "false");
+        }
+        catch (KeyManagementException | NoSuchAlgorithmException e)
+        {
+            JOptionPaneWithFrame.showExceptionBox(e.getMessage());
+            return;
+        }
+
+        /*
+            A Socket sever to allow extension to get attached as a client
+         */
         try
         {
             ServerSocket serverSocket = new ServerSocket(SERVER_SOCKET_PORT);
@@ -40,7 +63,7 @@ public class Main
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            JOptionPaneWithFrame.showExceptionBox(e.getMessage());
         }
     }
 }

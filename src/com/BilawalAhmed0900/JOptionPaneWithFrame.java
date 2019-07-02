@@ -1,7 +1,6 @@
 package com.BilawalAhmed0900;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class JOptionPaneWithFrame
 {
@@ -29,14 +28,14 @@ public class JOptionPaneWithFrame
         jFrame.setLocationRelativeTo( null );
 
         int result = JOptionPane.showOptionDialog(jFrame, message, title,
-                                                  optionType, messageType, icon, options, initialValue);
+                                                  optionType, messageType, icon,
+                                                  options, initialValue);
 
         jFrame.dispose();
-
         return result;
     }
 
-    public static void showExceptionBox(Object exceptionMessage)
+    public static void showExceptionBox(String exceptionMessage)
     {
         showMessageDialog(exceptionMessage, "Exception...",
                           JOptionPane.ERROR_MESSAGE, null);

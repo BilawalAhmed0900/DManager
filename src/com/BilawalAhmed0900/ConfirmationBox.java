@@ -1,7 +1,6 @@
 package com.BilawalAhmed0900;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -10,21 +9,23 @@ public class ConfirmationBox
 {
     private String url;
     private String fileName;
+    private int contentLength;
     private final Object lock = new Object();
 
     private static final String DOWNLOAD_DIRECTORY = System.getProperty("user.home") + File.separator + "Downloads";
 
-    public ConfirmationBox(String url, String fileName)
+    public ConfirmationBox(String url, String fileName, int contentLength)
     {
         this.url = url;
         this.fileName = DOWNLOAD_DIRECTORY + File.separator + fileName;
+        this.contentLength = contentLength;
     }
 
     public ReturnStructure showConfirmationBox()
     {
         ReturnStructure returnStructure = new ReturnStructure();
 
-        JFrame jFrame = new JFrame("Confirmation");
+        JFrame jFrame = new JFrame("Confirmation...");
         jFrame.setSize(600, 130);
         jFrame.setAlwaysOnTop(true);
         jFrame.setResizable(false);
@@ -81,7 +82,9 @@ public class ConfirmationBox
     /*
         Third row of the GUI
      */
-        JButton downloadButton = new JButton("Download");
+        JButton downloadButton = new JButton(((contentLength != -1)
+                                             ? String.format("Download: %s", BytesToMiBGiBTiB.normalize(contentLength, 2))
+                                             : "Download"));
         downloadButton.addActionListener(e ->
         {
             synchronized (lock)
@@ -93,11 +96,21 @@ public class ConfirmationBox
             returnStructure.code = ReturnCode.OK;
             returnStructure.path = filenameField.getText();
         });
-        downloadButton.setBounds(480, 66, 100, 23);
+        if (contentLength != -1)
+        {
+            downloadButton.setBounds(420, 66, 160, 23);
+        }
+        else
+        {
+            downloadButton.setBounds(480, 66, 100, 23);
+        }
         jPanel.add(downloadButton);
 
         jPanel.setVisible(true);
         jFrame.add(jPanel);
+
+        // jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
 
         jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         jFrame.setVisible(true);

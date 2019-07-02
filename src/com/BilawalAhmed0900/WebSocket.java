@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+/*
+    A wrapper around Socket to read from it
+ */
 public class WebSocket
 {
     private Socket socket;
@@ -16,6 +19,9 @@ public class WebSocket
 
     private void hashExchange()
     {
+        /*
+            First bytes are sent with Sec-WebSocket-Key so, we can send Sec-WebSocket-Accept back
+         */
         try
         {
             InputStream inputStream = socket.getInputStream();
@@ -68,6 +74,9 @@ public class WebSocket
         }
     }
 
+    /*
+        https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#Format
+     */
     String getReadString()
     {
         byte[] input = readBytes();
@@ -123,6 +132,11 @@ public class WebSocket
 
             for (int i = 0; i < size; i++)
             {
+                if (read >= input.length)
+                {
+                    break;
+                }
+
                 input[read] = (byte)(input[read] ^ mask[i % 4]);
                 read++;
             }

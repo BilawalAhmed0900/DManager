@@ -5,6 +5,9 @@ import java.net.HttpURLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+/*
+    A Thread class which downloads from a HttpUrlConnection and updates to AtomicLong how much has been read
+ */
 public class DownloadGUIThread extends Thread
 {
     private String filename;

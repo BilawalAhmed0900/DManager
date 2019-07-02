@@ -5,6 +5,11 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/*
+    A class to show a "MessageBox" without interrupting the flow of program
+    Message can be changed
+    Box can be disposed-of on need
+ */
 public class WaitingBox
 {
     private JFrame jFrame;
@@ -34,6 +39,9 @@ public class WaitingBox
                 jFrame = null;
             }
         });
+
+        jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
 
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         jFrame.setVisible(true);

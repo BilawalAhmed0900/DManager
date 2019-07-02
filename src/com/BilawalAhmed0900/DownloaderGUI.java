@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 class BytesToMiBGiBTiB
 {
-    public static String normalize(long size)
+    public static String normalize(long size, int precisionDigit)
     {
         final String[] suffix = { "B", "KiB", "MiB", "GiB", "TiB" };
         long tempSize = size;
@@ -33,7 +33,7 @@ class BytesToMiBGiBTiB
             }
         }
 
-        return String.format("%.2f %s", (double)size / Math.pow(1024, suffixIndex), suffix[suffixIndex]);
+        return String.format("%." + precisionDigit + "f %s", (double)size / Math.pow(1024, suffixIndex), suffix[suffixIndex]);
     }
 }
 
@@ -97,15 +97,18 @@ class GUI extends Thread
         {
             @Override public void windowClosing(WindowEvent e)
             {
-                hasCancelled.set(true);
                 for (DownloadGUIThread downloadGUIThread: downloadGUIThreads)
                 {
                     downloadGUIThread.stopDownloading();
                 }
+                hasCancelled.set(true);
 
-                super.windowClosing(e);
+                // super.windowClosing(e);
             }
         });
+
+        // jFrame.pack();
+        jFrame.setLocationRelativeTo(null);
 
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         jFrame.setVisible(true);
@@ -114,7 +117,7 @@ class GUI extends Thread
     @Override public void run()
     {
         System.out.println("Started GUI...");
-        String filesizeString = ((filesize == -1) ? "(UNKNOWN)" : BytesToMiBGiBTiB.normalize(filesize));
+        String filesizeString = ((filesize == -1) ? "(UNKNOWN)" : BytesToMiBGiBTiB.normalize(filesize, 3));
         while (true)
         {
             boolean isWorking = !hasJoined.get() && hasCompleted.get();
@@ -127,7 +130,7 @@ class GUI extends Thread
                     jTextArea.setText("  URL:                 " + url + "\n" +
                                       "  Filename:          " + filename + "\n" +
                                       "  Filesize:            " + filesizeString + "\n" +
-                                      "  Downloaded:    " + BytesToMiBGiBTiB.normalize(downloaded.get()) + "\n" +
+                                      "  Downloaded:    " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
                                       "  Progress:          " + ((filesize != -1) ? String.format("%.2f%%", (double)downloaded.get() / (double)filesize * 100.0) : "(UNKNOWN)")));
 
 
@@ -146,6 +149,9 @@ class GUI extends Thread
     }
 }
 
+/*
+    A class that invoke a GUI and invoke several threads to download from ArrayList of HttpUrlConnection
+ */
 public class DownloaderGUI
 {
     private String url;
@@ -177,8 +183,14 @@ public class DownloaderGUI
         }
 
         AtomicLong downloaded = new AtomicLong(0);
+
+        // User pressed cancel
         AtomicBoolean hasCancelled = new AtomicBoolean(false);
+
+        // Downloading completed without ReadTimeOut
         AtomicBoolean hasCompleted = new AtomicBoolean(true);
+
+        // Parts have been joined or not
         AtomicBoolean hasJoined = new AtomicBoolean(false);
 
         final DownloadGUIThread[] downloaderThreads = new DownloadGUIThread[links.size()];

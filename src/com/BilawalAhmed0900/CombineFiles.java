@@ -15,13 +15,31 @@ public class CombineFiles
             throws IOException
     {
         FileOutputStream fileOutputStream = new FileOutputStream(parentName);
+        FileInputStream[] fileInputStreamList = new FileInputStream[partsName.size()];
+
+        for (int i = 0, size = partsName.size(); i < size; i++)
+        {
+            try
+            {
+                fileInputStreamList[i] = new FileInputStream(partsName.get(i));
+            }
+            catch (IOException e)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    fileInputStreamList[j].close();
+                }
+
+                throw e;
+            }
+        }
+
         byte[] buffer = new byte[BUFFER_SIZE];
         for (int i = 0, size = partsName.size(); i < size; i++)
         {
-            FileInputStream fileInputStream = new FileInputStream(partsName.get(i));
             while (true)
             {
-                int read = fileInputStream.read(buffer);
+                int read = fileInputStreamList[i].read(buffer);
                 if (read == -1)
                 {
                     break;
@@ -29,16 +47,20 @@ public class CombineFiles
 
                 fileOutputStream.write(buffer, 0, read);
             }
-            fileInputStream.close();
 
+            fileInputStreamList[i].close();
             if (deleteParts) new File(partsName.get(i)).delete();
         }
+
         fileOutputStream.close();
     }
 
     public static void combine(String[] partsName, String parentName, boolean deleteParts)
             throws IOException
     {
+        /*
+            This does slow things...
+         */
         combine(Arrays.asList(partsName), parentName, deleteParts);
     }
 }

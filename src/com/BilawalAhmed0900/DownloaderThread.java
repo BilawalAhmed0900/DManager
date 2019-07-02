@@ -1,6 +1,5 @@
 package com.BilawalAhmed0900;
 
-import javax.net.ssl.SSLException;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -11,6 +10,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+    A Thread class which get the string read from WebSocket, sent from extension
+    Parse it and open several HttpUrlConnections to its url
+ */
 public class DownloaderThread extends Thread
 {
     private String cookieString;
@@ -23,6 +26,9 @@ public class DownloaderThread extends Thread
         map = new HashMap<>(8);
     }
 
+    /*
+        The very first connection to open. Other may even not open depending upon how many server can give us
+     */
     private List<HttpURLConnection> openMainConnection(String url, String cookieString)
     {
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(MAX_CONNECTION));
@@ -48,6 +54,10 @@ public class DownloaderThread extends Thread
         return result;
     }
 
+    /*
+        Try from Content-Disposition
+        then from url itself, after last "/" and before first "&" or "?" after it
+     */
     private String getFileName(HttpURLConnection urlConnection)
     {
         String contentDisposition = urlConnection.getHeaderField("Content-Disposition");
@@ -77,6 +87,9 @@ public class DownloaderThread extends Thread
         return fileName;
     }
 
+    /*
+        Try to open as many HttpUrlConnection to a Url as possible, up to 8
+     */
     private List<HttpURLConnection> openLinks(String url, String cookieString)
     {
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(MAX_CONNECTION));
@@ -109,6 +122,9 @@ public class DownloaderThread extends Thread
         return result;
     }
 
+    /*
+        Open `totalLinks` seeked `Range=` HttpUrlConnection on a Url
+     */
     private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, int contentLength, int totalLinks)
     {
         int chunkSize = contentLength / totalLinks;
@@ -167,9 +183,19 @@ public class DownloaderThread extends Thread
     @Override
     public void run()
     {
+        /*
+            A dictionary is read
+            Remove first { and last } then
+            Split by ,
+         */
         String[] cookieStringParted = cookieString.substring(1, cookieString.length() - 1).split(",");
         for (String part: cookieStringParted)
         {
+            /*
+                "filename":"something"
+
+                Last \" is absorbed it (.*), so check for it is endsWith("\"")
+             */
             Pattern pattern = Pattern.compile("\"(.*)\":\"*(.*)?\"*");
             Matcher matcher = pattern.matcher(part);
             if (matcher.find())
@@ -187,6 +213,10 @@ public class DownloaderThread extends Thread
         }
 
         System.out.println(map);
+
+        /*
+            Firefox sends redirected Url in url while chrome in finalUrl
+         */
         String finalURL = (map.get("finalUrl").equals("")) ? map.get("url") : map.get("finalUrl");
         List<HttpURLConnection> arrayList = openMainConnection(finalURL, map.get("cookies"));
         if (arrayList == null)
@@ -197,6 +227,9 @@ public class DownloaderThread extends Thread
             return;
         }
 
+        /*
+            May not be necessary, but connection may not open even while not throwing an exception
+         */
         if (arrayList.size() != 1)
         {
             return;
@@ -205,15 +238,25 @@ public class DownloaderThread extends Thread
         int totalContentLength = arrayList.get(0).getContentLength();
         String fileName = getFileName(arrayList.get(0));
 
-        ReturnStructure returnStructure = (new ConfirmationBox(arrayList.get(0).getURL().toString(), fileName)).showConfirmationBox();
+        ReturnStructure returnStructure = (new ConfirmationBox(arrayList.get(0).getURL().toString(), fileName, totalContentLength)).showConfirmationBox();
         if (returnStructure.code == ReturnCode.CANCELLED || returnStructure.path.equals(""))
         {
+            /*
+                Cancelled pressed by user
+             */
             arrayList.get(0).disconnect();
             arrayList.clear();
             map.clear();
             return;
         }
 
+        /*
+            totalContentLength == -1 for unknown size
+            Even if filesize is less than 1MB, only use first connection
+
+            Only opens more connection if Accept-Ranges is sent by server and it is equal to "bytes"
+            Some server sends "Start" instead
+         */
         if (totalContentLength != -1
                 && totalContentLength > 1024 * 1024
                 && arrayList.get(0).getHeaderField("Accept-Ranges") != null
