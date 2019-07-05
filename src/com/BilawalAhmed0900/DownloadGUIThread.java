@@ -34,11 +34,11 @@ public class DownloadGUIThread extends Thread
         {
             fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename), 8 * BUFFER_SIZE);
             InputStream connectionStream = urlConnection.getInputStream();
-            byte[] buffer = new byte[BUFFER_SIZE];
 
+            byte[] buffer = new byte[BUFFER_SIZE];
             while (running)
             {
-                int read = connectionStream.read(buffer);
+                int read = connectionStream.readNBytes(buffer, 0, BUFFER_SIZE);
                 if (read == -1)
                 {
                     break;

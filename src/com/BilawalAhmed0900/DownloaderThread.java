@@ -116,7 +116,7 @@ public class DownloaderThread extends Thread
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
                 {
                     result.add(httpURLConnection);
-                    if (httpURLConnection.getContentLength() == -1)
+                    if (httpURLConnection.getContentLengthLong() == -1)
                     {
                         break;
                     }
@@ -140,9 +140,9 @@ public class DownloaderThread extends Thread
     /*
         Open `totalLinks` seeked `Range=` HttpUrlConnection on a Url
      */
-    private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, int contentLength, int totalLinks)
+    private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, long contentLength, int totalLinks)
     {
-        int chunkSize = contentLength / totalLinks;
+        long chunkSize = contentLength / totalLinks;
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(totalLinks));
         for (int i = 0; i < totalLinks; i++)
         {
@@ -234,6 +234,7 @@ public class DownloaderThread extends Thread
          */
         String finalURL = (map.get("finalUrl").equals("")) ? map.get("url") : map.get("finalUrl");
         List<HttpURLConnection> arrayList = openMainConnection(finalURL, map.get("cookies"));
+        System.out.println(arrayList.get(0).getHeaderFields());
         if (arrayList == null)
         {
             JOptionPane.showMessageDialog(null,
@@ -250,7 +251,7 @@ public class DownloaderThread extends Thread
             return;
         }
 
-        long totalContentLength = arrayList.get(0).getContentLength();
+        long totalContentLength = arrayList.get(0).getContentLengthLong();
         String fileName = getFileName(arrayList.get(0));
 
         ReturnStructure returnStructure = (new ConfirmationBox(arrayList.get(0).getURL().toString(), fileName,
@@ -288,7 +289,7 @@ public class DownloaderThread extends Thread
             List<HttpURLConnection> seekAbleList = openLinks(finalURL, map.get("cookies"));
             if (seekAbleList.size() != 0)
             {
-                int contentLength = seekAbleList.get(0).getContentLength();
+                long contentLength = seekAbleList.get(0).getContentLengthLong();
                 int totalListLength = seekAbleList.size();
 
                 for (HttpURLConnection httpURLConnection: seekAbleList)
