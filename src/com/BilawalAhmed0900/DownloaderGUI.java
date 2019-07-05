@@ -311,6 +311,7 @@ public class DownloaderGUI
                 try
                 {
                     Desktop.getDesktop().open(new File(filename));
+
                 }
                 catch (IOException e)
                 {

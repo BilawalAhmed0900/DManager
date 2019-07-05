@@ -1,5 +1,6 @@
 package com.BilawalAhmed0900;
 
+import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -102,14 +103,35 @@ public class ConfirmationBox
                                              : "Download"));
         downloadButton.addActionListener(e ->
         {
-            synchronized (lock)
+            File file = new File(filenameField.getText()).getParentFile();
+            if (file != null)
             {
-                SwingUtilities.invokeLater(() ->
-                                                   jFrame.setVisible(false));
+                if (file.isDirectory() && file.canRead() && file.canWrite())
+                {
+                    synchronized (lock)
+                    {
+                        SwingUtilities.invokeLater(() -> jFrame.setVisible(false));
+                    }
+
+                    returnStructure.code = ReturnCode.OK;
+                    returnStructure.path = filenameField.getText();
+                }
+                else
+                {
+                    JOptionPaneWithFrame.showExceptionBox("Not enough permission to read/write: "
+                                                                  + filenameField.getText(),
+                                                          false);
+
+                }
+            }
+            else
+            {
+                JOptionPaneWithFrame.showExceptionBox("No parent directory for "
+                                                              + filenameField.getText(),
+                                                      false);
             }
 
-            returnStructure.code = ReturnCode.OK;
-            returnStructure.path = filenameField.getText();
+
         });
         if (contentLength != -1)
         {

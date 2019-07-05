@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3adef6a-1218-450c-adff-f111e4735756" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/GetTaskBar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/CombineFiles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/CombineFiles.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloadGUIThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloadGUIThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/JOptionPaneWithFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/JOptionPaneWithFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/BilawalAhmed0900/WaitingBox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/BilawalAhmed0900/WaitingBox.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,10 +20,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloadGUIThread.java">
+        <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="66" column="17" lean-forward="true" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+            <state relative-caret-position="493">
+              <caret line="35" column="11" selection-start-line="35" selection-start-column="11" selection-end-line="35" selection-end-column="11" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -41,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2297">
-              <caret line="15" column="45" lean-forward="true" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
+            <state relative-caret-position="238">
+              <caret line="108" column="34" selection-start-line="108" selection-start-column="34" selection-end-line="108" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -53,8 +46,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="94" column="49" lean-forward="true" selection-start-line="94" selection-start-column="49" selection-end-line="94" selection-end-column="49" />
+            <state relative-caret-position="1445">
+              <caret line="94" column="49" selection-start-line="94" selection-start-column="49" selection-end-line="94" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -74,8 +67,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-36">
-              <caret line="189" column="67" selection-start-line="189" selection-start-column="59" selection-end-line="189" selection-end-column="67" />
+            <state relative-caret-position="-393">
+              <caret line="40" column="6" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -107,8 +100,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="40" column="31" selection-start-line="40" selection-start-column="31" selection-end-line="40" selection-end-column="31" />
+            <state relative-caret-position="233">
+              <caret line="17" column="12" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="76" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -149,13 +142,13 @@
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/WaitingBox.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/JOptionPaneWithFrame.java" />
-        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/CombineFiles.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/GetTaskBar.java" />
-        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java" />
-        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java" />
         <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloadGUIThread.java" />
+        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java" />
+        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java" />
+        <option value="$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java" />
       </list>
     </option>
   </component>
@@ -169,6 +162,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -191,8 +186,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -264,7 +257,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3033557" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31208053" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -299,31 +292,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/ReturnStructure.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="36" selection-start-line="14" selection-start-column="36" selection-end-line="14" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.desktop/java/awt/peer/DesktopPeer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="60" column="12" selection-start-line="60" selection-start-column="12" selection-end-line="60" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/util/concurrent/atomic/AtomicBoolean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="150" column="22" selection-start-line="150" selection-start-column="22" selection-end-line="150" selection-end-column="22" />
-          <folding>
-            <element signature="e#5702#5703#0" expanded="true" />
-            <element signature="e#5742#5743#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/lang/SecurityManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
@@ -409,17 +377,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="482">
           <caret line="726" column="16" selection-start-line="726" selection-start-column="16" selection-end-line="726" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.desktop/java/awt/Desktop.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1209">
-          <caret line="92" column="13" selection-start-line="92" selection-start-column="13" selection-end-line="92" selection-end-column="13" />
-          <folding>
-            <element signature="e#10990#10991#0" expanded="true" />
-            <element signature="e#11037#11038#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -545,34 +502,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="23" column="11" lean-forward="true" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/nio/file/Files.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="2619" column="26" selection-start-line="2619" selection-start-column="26" selection-end-line="2619" selection-end-column="26" />
-          <folding>
-            <element signature="e#117893#117894#0" expanded="true" />
-            <element signature="e#117951#117952#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/io/File.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="760" column="19" selection-start-line="760" selection-start-column="19" selection-end-line="760" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.desktop/java/awt/GraphicsEnvironment.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
@@ -607,64 +536,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/JOptionPaneWithFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="23" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/GetTaskBar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/CombineFiles.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="40" column="31" selection-start-line="40" selection-start-column="31" selection-end-line="40" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/lang/Integer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="117">
           <caret line="609" column="22" selection-start-line="609" selection-start-column="22" selection-end-line="609" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-36">
-          <caret line="189" column="67" selection-start-line="189" selection-start-column="59" selection-end-line="189" selection-end-column="67" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2297">
-          <caret line="15" column="45" lean-forward="true" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -679,16 +554,6 @@
             <element signature="e#102161#102162#0" expanded="true" />
             <element signature="e#133792#133793#0" expanded="true" />
             <element signature="e#133849#133850#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="94" column="49" lean-forward="true" selection-start-line="94" selection-start-column="49" selection-end-line="94" selection-end-column="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -724,8 +589,138 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloadGUIThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="66" column="17" lean-forward="true" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+        <state relative-caret-position="1054">
+          <caret line="66" column="17" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1445">
+          <caret line="94" column="49" selection-start-line="94" selection-start-column="49" selection-end-line="94" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/JOptionPaneWithFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="23" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/CombineFiles.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="25" column="33" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/GetTaskBar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/BrowseToFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="17" column="12" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="76" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.desktop/java/awt/peer/DesktopPeer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="71" column="9" selection-start-line="71" selection-start-column="9" selection-end-line="71" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.desktop/java/awt/Desktop.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="598" column="17" selection-start-line="598" selection-start-column="17" selection-end-line="598" selection-end-column="17" />
+          <folding>
+            <element signature="e#10990#10991#0" expanded="true" />
+            <element signature="e#11037#11038#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/nio/file/Paths.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="61" column="36" selection-start-line="61" selection-start-column="16" selection-end-line="61" selection-end-column="36" />
+          <folding>
+            <element signature="e#2513#2514#0" expanded="true" />
+            <element signature="e#2556#2557#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/nio/file/spi/FileSystemProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="1035" column="25" selection-start-line="1035" selection-start-column="25" selection-end-line="1035" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/nio/file/Files.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="2585" column="32" selection-start-line="2585" selection-start-column="32" selection-end-line="2585" selection-end-column="32" />
+          <folding>
+            <element signature="e#117893#117894#0" expanded="true" />
+            <element signature="e#117951#117952#0" expanded="true" />
+            <element signature="e#119456#119457#0" expanded="true" />
+            <element signature="e#119515#119516#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/DownloaderGUI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-393">
+          <caret line="40" column="6" selection-start-line="40" selection-start-column="6" selection-end-line="40" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Oracle/jdk-12.0.1/lib/src.zip!/java.base/java/io/File.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="568" column="17" lean-forward="true" selection-start-line="568" selection-start-column="17" selection-end-line="568" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/ConfirmationBox.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="108" column="34" selection-start-line="108" selection-start-column="34" selection-end-line="108" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/BilawalAhmed0900/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="35" column="11" selection-start-line="35" selection-start-column="11" selection-end-line="35" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
