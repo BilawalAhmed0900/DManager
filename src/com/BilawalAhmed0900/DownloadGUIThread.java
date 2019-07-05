@@ -2,7 +2,6 @@ package com.BilawalAhmed0900;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -38,7 +37,7 @@ public class DownloadGUIThread extends Thread
             byte[] buffer = new byte[BUFFER_SIZE];
             while (running)
             {
-                int read = connectionStream.readNBytes(buffer, 0, BUFFER_SIZE);
+                int read = connectionStream.read(buffer);
                 if (read == -1)
                 {
                     break;

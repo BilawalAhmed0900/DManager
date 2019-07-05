@@ -6,12 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CombineFiles
 {
     public static final int BUFFER_SIZE = 64 * 1024 * 1024;
 
-    public static void combine(List<String> partsName, String parentName, boolean deleteParts)
+    public static void combine(List<String> partsName, String parentName, boolean deleteParts, AtomicLong joinedLength)
             throws IOException, SecurityException
     {
         FileOutputStream fileOutputStream = new FileOutputStream(parentName);
@@ -45,6 +46,11 @@ public class CombineFiles
                     break;
                 }
 
+                if (joinedLength != null)
+                {
+                    joinedLength.addAndGet(read);
+                }
+
                 fileOutputStream.write(buffer, 0, read);
             }
 
@@ -55,12 +61,12 @@ public class CombineFiles
         fileOutputStream.close();
     }
 
-    public static void combine(String[] partsName, String parentName, boolean deleteParts)
+    public static void combine(String[] partsName, String parentName, boolean deleteParts, AtomicLong joinedLength)
             throws IOException
     {
         /*
             This does slow things...
          */
-        combine(Arrays.asList(partsName), parentName, deleteParts);
+        combine(Arrays.asList(partsName), parentName, deleteParts, joinedLength);
     }
 }

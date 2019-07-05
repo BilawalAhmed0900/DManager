@@ -46,6 +46,7 @@ class GUI extends Thread
     private AtomicLong downloaded;
     private AtomicBoolean hasCompleted;
     private AtomicBoolean hasJoined;
+    private AtomicBoolean isJoining;
 
     private JFrame jFrame;
     private JTextArea jTextArea;
@@ -53,7 +54,7 @@ class GUI extends Thread
 
     public GUI(String filename, long filesize, String url,
                AtomicLong downloaded, DownloadGUIThread[] downloadGUIThreads,
-               AtomicBoolean hasCompleted, AtomicBoolean hasJoined, AtomicBoolean hasCancelled)
+               AtomicBoolean hasCompleted, AtomicBoolean hasJoined, AtomicBoolean hasCancelled, AtomicBoolean isJoining)
     {
         this.filename = new File(filename).getName();
         this.filesize = filesize;
@@ -61,9 +62,10 @@ class GUI extends Thread
         this.downloaded = downloaded;
         this.hasCompleted = hasCompleted;
         this.hasJoined = hasJoined;
+        this.isJoining = isJoining;
 
         jFrame = new JFrame("Downloading \"" + new File(filename).getName() + "\"");
-        jFrame.setSize(600, 190);
+        jFrame.setSize(600, 210);
         jFrame.setBackground(Color.WHITE);
         jFrame.setAlwaysOnTop(true);
         jFrame.setResizable(false);
@@ -75,11 +77,12 @@ class GUI extends Thread
         jTextArea = new JTextArea();
         jTextArea.setEditable(false);
         jTextArea.setHighlighter(null);
-        jTextArea.setBounds(0, 0, 600, 80);
+        jTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        jTextArea.setBounds(0, 0, 600, 100);
         jPanel.add(jTextArea);
 
         jProgressBar = new JProgressBar(0, 1000);
-        jProgressBar.setBounds(5, 85, 575, 25);
+        jProgressBar.setBounds(5, 105, 575, 25);
         jProgressBar.setForeground(new Color(0, 194, 49));
         jPanel.add(jProgressBar);
 
@@ -94,7 +97,7 @@ class GUI extends Thread
             hasCancelled.set(true);
         });
         cancelButton.setSize(100, 28);
-        cancelButton.setBounds(480, 118, 100, 28);
+        cancelButton.setBounds(480, 138, 100, 28);
         jPanel.add(cancelButton);
 
         jPanel.setVisible(true);
@@ -146,12 +149,25 @@ class GUI extends Thread
 
             }
 
-            SwingUtilities.invokeLater(() ->
-                    jTextArea.setText("  URL:                 " + url + "\n" +
-                                      "  Filename:          " + filename + "\n" +
-                                      "  Filesize:            " + filesizeString + "\n" +
-                                      "  Downloaded:    " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
-                                      "  Progress:          " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "(UNKNOWN)")));
+            if (isJoining.get())
+            {
+                SwingUtilities.invokeLater(() ->
+                   jTextArea.setText(" URL:          " + url + "\n" +
+                                     " Filename:     " + filename + "\n" +
+                                     " File size:    " + filesizeString + "\n" +
+                                     " Joined:       " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
+                                     " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "(UNKNOWN)")));
+            }
+            else
+            {
+                SwingUtilities.invokeLater(() ->
+                   jTextArea.setText(" URL:          " + url + "\n" +
+                                     " Filename:     " + filename + "\n" +
+                                     " File size:    " + filesizeString + "\n" +
+                                     " Downloaded:   " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
+                                     " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "(UNKNOWN)")));
+            }
+
 
             currentProgressValue = (int)Math.round(progressValue);
             if (taskbar != null && filesize != -1 && currentProgressValue != previousProgressValue)
@@ -221,6 +237,9 @@ public class DownloaderGUI
         // Parts have been joined or not
         AtomicBoolean hasJoined = new AtomicBoolean(false);
 
+        // Downloading or joining
+        AtomicBoolean isJoining = new AtomicBoolean(false);
+
         final DownloadGUIThread[] downloaderThreads = new DownloadGUIThread[links.size()];
         for (int i = 0, size = links.size(); i < size; i++)
         {
@@ -228,7 +247,7 @@ public class DownloaderGUI
             downloaderThreads[i].start();
         }
 
-        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads, hasCompleted, hasJoined, hasCancelled);
+        GUI gui = new GUI(filename, filesize, url, downloaded, downloaderThreads, hasCompleted, hasJoined, hasCancelled, isJoining);
         gui.start();
 
         for (int i = 0, size = links.size(); i < size; i++)
@@ -264,7 +283,9 @@ public class DownloaderGUI
             {
                 try
                 {
-                    CombineFiles.combine(filePartsName, filename, true);
+                    isJoining.set(true);
+                    downloaded.set(0);
+                    CombineFiles.combine(filePartsName, filename, true, downloaded);
                 }
                 catch (SecurityException e)
                 {

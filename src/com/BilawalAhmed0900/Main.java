@@ -19,6 +19,8 @@ public class Main
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
 
+        System.setProperty("awt.useSystemAAFontSettings", "false");
+
         /*
             Turning off HTTPS SSL security
          */
