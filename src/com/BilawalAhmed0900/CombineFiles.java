@@ -12,7 +12,7 @@ public class CombineFiles
     public static final int BUFFER_SIZE = 64 * 1024 * 1024;
 
     public static void combine(List<String> partsName, String parentName, boolean deleteParts)
-            throws IOException
+            throws IOException, SecurityException
     {
         FileOutputStream fileOutputStream = new FileOutputStream(parentName);
         FileInputStream[] fileInputStreamList = new FileInputStream[partsName.size()];

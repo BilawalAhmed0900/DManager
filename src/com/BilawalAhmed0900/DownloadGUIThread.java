@@ -2,6 +2,7 @@ package com.BilawalAhmed0900;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -15,7 +16,7 @@ public class DownloadGUIThread extends Thread
     private AtomicLong downloaded;
     private AtomicBoolean hasCompleted;
     private volatile boolean running = true;
-    private final int BUFFER_SIZE = 1024;
+    private final int BUFFER_SIZE = 65536;
 
     public DownloadGUIThread(String filename, HttpURLConnection urlConnection,
                              AtomicLong downloaded, AtomicBoolean hasCompleted)
@@ -28,10 +29,10 @@ public class DownloadGUIThread extends Thread
 
     @Override public void run()
     {
-        FileOutputStream fileOutputStream = null;
+        BufferedOutputStream fileOutputStream = null;
         try
         {
-            fileOutputStream = new FileOutputStream(filename);
+            fileOutputStream = new BufferedOutputStream(new FileOutputStream(filename), 8 * BUFFER_SIZE);
             InputStream connectionStream = urlConnection.getInputStream();
             byte[] buffer = new byte[BUFFER_SIZE];
 
@@ -50,13 +51,11 @@ public class DownloadGUIThread extends Thread
         catch (FileNotFoundException e)
         {
             stopDownloading();
-            System.out.printf("Cannot find file \"%s\"\n", filename);
-            // e.printStackTrace();
+            JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
         }
         catch (IOException e)
         {
             stopDownloading();
-            e.printStackTrace();
         }
         finally
         {
@@ -69,7 +68,7 @@ public class DownloadGUIThread extends Thread
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
             }
         }
     }

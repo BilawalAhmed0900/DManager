@@ -7,12 +7,13 @@ public class JOptionPaneWithFrame
     /*
         https://stackoverflow.com/questions/542844/how-can-i-make-joptionpane-dialogs-show-up-as-a-task-on-the-taskbar
      */
-    public static void showMessageDialog(Object message, String title, int messageType, Icon icon)
+    public static void showMessageDialog(Object message, String title, int messageType, Icon icon, boolean setOnTop)
     {
         JFrame jFrame = new JFrame(title);
         jFrame.setUndecorated( true );
         jFrame.setVisible( true );
         jFrame.setLocationRelativeTo( null );
+        jFrame.setAlwaysOnTop(setOnTop);
 
         JOptionPane.showMessageDialog(jFrame, message, title, messageType, icon);
 
@@ -35,9 +36,9 @@ public class JOptionPaneWithFrame
         return result;
     }
 
-    public static void showExceptionBox(String exceptionMessage)
+    public static void showExceptionBox(String exceptionMessage, boolean setOnTop)
     {
         showMessageDialog(exceptionMessage, "Exception...",
-                          JOptionPane.ERROR_MESSAGE, null);
+                          JOptionPane.ERROR_MESSAGE, null, setOnTop);
     }
 }

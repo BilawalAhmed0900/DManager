@@ -1,6 +1,7 @@
 package com.BilawalAhmed0900;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -67,7 +68,16 @@ public class DownloaderThread extends Thread
             Matcher matcher = pattern.matcher(contentDisposition);
             if (matcher.find())
             {
-                return matcher.group(1);
+                /*
+                    Some server sends name like this
+
+                    Example.server/File.ext
+                 */
+                String fileName = matcher.group(1);
+                int position = fileName.lastIndexOf("/");
+                if (position == -1) return fileName;
+
+                return fileName.substring(position + 1);
             }
         }
 
@@ -78,7 +88,7 @@ public class DownloaderThread extends Thread
         int positionQuestionMark = url.indexOf("?", position);
 
         int tillPosition = Math.min(positionAnd, positionQuestionMark);
-        if (tillPosition == -1)
+        if (tillPosition == -1 || tillPosition <= position)
             tillPosition = url.length();
 
         String fileName = url.substring(position + 1, tillPosition);
@@ -111,9 +121,14 @@ public class DownloaderThread extends Thread
                         break;
                     }
                 }
+                else
+                {
+                    break;
+                }
             }
             catch (IOException e)
             {
+                break;
                 // e.printStackTrace();
             }
 
@@ -235,10 +250,13 @@ public class DownloaderThread extends Thread
             return;
         }
 
-        int totalContentLength = arrayList.get(0).getContentLength();
+        long totalContentLength = arrayList.get(0).getContentLength();
         String fileName = getFileName(arrayList.get(0));
 
-        ReturnStructure returnStructure = (new ConfirmationBox(arrayList.get(0).getURL().toString(), fileName, totalContentLength)).showConfirmationBox();
+        ReturnStructure returnStructure = (new ConfirmationBox(arrayList.get(0).getURL().toString(), fileName,
+                                                               (totalContentLength == -1) ? Long.parseLong(map.get("fileSize")) : totalContentLength,
+                                                               map.get("isVideo").equals("true"),
+                                                               map.get("isAudio").equals("true"))).showConfirmationBox();
         if (returnStructure.code == ReturnCode.CANCELLED || returnStructure.path.equals(""))
         {
             /*
@@ -249,6 +267,9 @@ public class DownloaderThread extends Thread
             map.clear();
             return;
         }
+
+        File parentDirs = new File(returnStructure.path).getParentFile();
+        if (parentDirs != null) parentDirs.mkdirs();
 
         /*
             totalContentLength == -1 for unknown size
@@ -288,6 +309,14 @@ public class DownloaderThread extends Thread
                 waitingBox.dispose();
             }
         }
+
+        /*
+            Even if server sends -1, browser sometime knows the size.
+            But we have to make links according to what server sent
+            but GUI can be made according to known size
+         */
+        if (totalContentLength == -1)
+            totalContentLength = Long.parseLong(map.get("fileSize"));
 
         assert arrayList != null;
         System.out.println("Started downloading...");

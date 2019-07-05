@@ -4,20 +4,35 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ConfirmationBox
 {
     private String url;
     private String fileName;
-    private int contentLength;
+    private long contentLength;
     private final Object lock = new Object();
 
     private static final String DOWNLOAD_DIRECTORY = System.getProperty("user.home") + File.separator + "Downloads";
 
-    public ConfirmationBox(String url, String fileName, int contentLength)
+    public ConfirmationBox(String url, String fileName, long contentLength, boolean isVideo, boolean isAudio)
     {
         this.url = url;
-        this.fileName = DOWNLOAD_DIRECTORY + File.separator + fileName;
+        if (isVideo)
+        {
+            this.fileName = DOWNLOAD_DIRECTORY + File.separator + "Video" + File.separator + fileName;
+        }
+        else if (isAudio)
+        {
+            this.fileName = DOWNLOAD_DIRECTORY + File.separator + "Music" + File.separator + fileName;
+        }
+        else
+        {
+            this.fileName = DOWNLOAD_DIRECTORY + File.separator + fileName;
+        }
+
         this.contentLength = contentLength;
     }
 
@@ -90,7 +105,7 @@ public class ConfirmationBox
             synchronized (lock)
             {
                 SwingUtilities.invokeLater(() ->
-                        jFrame.setVisible(false));
+                                                   jFrame.setVisible(false));
             }
 
             returnStructure.code = ReturnCode.OK;

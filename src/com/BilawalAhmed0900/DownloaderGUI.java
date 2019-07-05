@@ -33,7 +33,8 @@ class BytesToMiBGiBTiB
             }
         }
 
-        return String.format("%." + precisionDigit + "f %s", (double)size / Math.pow(1024, suffixIndex), suffix[suffixIndex]);
+        return String.format("%." + precisionDigit + "f %s",
+                             (double)size / Math.pow(1024, suffixIndex), suffix[suffixIndex]);
     }
 }
 
@@ -48,6 +49,7 @@ class GUI extends Thread
 
     private JFrame jFrame;
     private JTextArea jTextArea;
+    private JProgressBar jProgressBar;
 
     public GUI(String filename, long filesize, String url,
                AtomicLong downloaded, DownloadGUIThread[] downloadGUIThreads,
@@ -61,7 +63,7 @@ class GUI extends Thread
         this.hasJoined = hasJoined;
 
         jFrame = new JFrame("Downloading \"" + new File(filename).getName() + "\"");
-        jFrame.setSize(600, 155);
+        jFrame.setSize(600, 190);
         jFrame.setBackground(Color.WHITE);
         jFrame.setAlwaysOnTop(true);
         jFrame.setResizable(false);
@@ -76,6 +78,11 @@ class GUI extends Thread
         jTextArea.setBounds(0, 0, 600, 80);
         jPanel.add(jTextArea);
 
+        jProgressBar = new JProgressBar(0, 1000);
+        jProgressBar.setBounds(5, 85, 575, 25);
+        jProgressBar.setForeground(new Color(0, 194, 49));
+        jPanel.add(jProgressBar);
+
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e ->
         {
@@ -87,7 +94,7 @@ class GUI extends Thread
             hasCancelled.set(true);
         });
         cancelButton.setSize(100, 28);
-        cancelButton.setBounds(480, 83, 100, 28);
+        cancelButton.setBounds(480, 118, 100, 28);
         jPanel.add(cancelButton);
 
         jPanel.setVisible(true);
@@ -117,7 +124,12 @@ class GUI extends Thread
     @Override public void run()
     {
         System.out.println("Started GUI...");
+        final Taskbar taskbar = GetTaskBar.getTaskbar();
+
+        jProgressBar.setValue(jProgressBar.getMaximum());
         String filesizeString = ((filesize == -1) ? "(UNKNOWN)" : BytesToMiBGiBTiB.normalize(filesize, 3));
+
+        int currentProgressValue, previousProgressValue = -1;
         while (true)
         {
             boolean isWorking = !hasJoined.get() && hasCompleted.get();
@@ -126,13 +138,29 @@ class GUI extends Thread
                 break;
             }
 
+            double progressValue = (double)downloaded.get() / (double)filesize * 100.0;
+            if (filesize != -1)
+            {
+                SwingUtilities.invokeLater(() ->
+                                                   jProgressBar.setValue((int)Math.round(progressValue * 10)));
+
+            }
+
             SwingUtilities.invokeLater(() ->
                     jTextArea.setText("  URL:                 " + url + "\n" +
                                       "  Filename:          " + filename + "\n" +
                                       "  Filesize:            " + filesizeString + "\n" +
                                       "  Downloaded:    " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
-                                      "  Progress:          " + ((filesize != -1) ? String.format("%.2f%%", (double)downloaded.get() / (double)filesize * 100.0) : "(UNKNOWN)")));
+                                      "  Progress:          " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "(UNKNOWN)")));
 
+            currentProgressValue = (int)Math.round(progressValue);
+            if (taskbar != null && filesize != -1 && currentProgressValue != previousProgressValue)
+            {
+                final int taskBarProgressValue = currentProgressValue;
+                SwingUtilities.invokeLater(() -> taskbar.setWindowProgressValue(jFrame, taskBarProgressValue));
+
+            }
+            previousProgressValue = currentProgressValue;
 
             try
             {
@@ -227,7 +255,7 @@ public class DownloaderGUI
                 JOptionPaneWithFrame.showMessageDialog(String.format("<html>Read Timeout!<br>Connection error occurred while downloading<br>\"%s\"</html>", filename),
                                                        "Connection Error!",
                                                        JOptionPane.ERROR_MESSAGE,
-                                                       null);
+                                                       null, false);
             }
         }
         else
@@ -237,6 +265,10 @@ public class DownloaderGUI
                 try
                 {
                     CombineFiles.combine(filePartsName, filename, true);
+                }
+                catch (SecurityException e)
+                {
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -249,13 +281,20 @@ public class DownloaderGUI
             }
             else if (links.size() == 1)
             {
-                File oldFile = new File(filename);
-                if (oldFile.exists() && !oldFile.isDirectory())
+                try
                 {
-                    oldFile.delete();
-                }
+                    File oldFile = new File(filename);
+                    if (oldFile.exists() && !oldFile.isDirectory())
+                    {
+                        oldFile.delete();
+                    }
 
-                new File(filePartsName.get(0)).renameTo(oldFile);
+                    new File(filePartsName.get(0)).renameTo(oldFile);
+                }
+                catch (SecurityException e)
+                {
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
+                }
             }
 
             hasJoined.set(true);
@@ -275,7 +314,7 @@ public class DownloaderGUI
                 }
                 catch (IOException e)
                 {
-                    JOptionPaneWithFrame.showExceptionBox(e.getMessage());
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
                 }
             }
             else if (result == JOptionPane.NO_OPTION)
@@ -286,7 +325,7 @@ public class DownloaderGUI
                 }
                 catch (IOException e)
                 {
-                    JOptionPaneWithFrame.showExceptionBox(e.getMessage());
+                    JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
                 }
 
             }

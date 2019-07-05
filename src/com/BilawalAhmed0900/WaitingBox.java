@@ -40,7 +40,7 @@ public class WaitingBox
             }
         });
 
-        jFrame.pack();
+        // jFrame.pack();
         jFrame.setLocationRelativeTo(null);
 
         jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

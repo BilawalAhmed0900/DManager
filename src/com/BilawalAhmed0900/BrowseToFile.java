@@ -35,6 +35,14 @@ public class BrowseToFile
     public static void browseTo(String filename)
             throws IOException
     {
-        browseTo(new File(filename));
+        File file = new File(filename);
+        if (!file.exists() && !file.isDirectory() && file.getParentFile() != null)
+        {
+            browseTo(file.getParentFile());
+        }
+        else
+        {
+            browseTo(file);
+        }
     }
 }

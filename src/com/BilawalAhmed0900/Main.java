@@ -31,7 +31,7 @@ public class Main
         }
         catch (KeyManagementException | NoSuchAlgorithmException e)
         {
-            JOptionPaneWithFrame.showExceptionBox(e.getMessage());
+            JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
             return;
         }
 
@@ -63,7 +63,7 @@ public class Main
         }
         catch (IOException e)
         {
-            JOptionPaneWithFrame.showExceptionBox(e.getMessage());
+            JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
         }
     }
 }
