@@ -1,6 +1,8 @@
 package com.BilawalAhmed0900;
 
 import javax.swing.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class JOptionPaneWithFrame
 {
@@ -40,5 +42,18 @@ public class JOptionPaneWithFrame
     {
         showMessageDialog(exceptionMessage, "Exception...",
                           JOptionPane.ERROR_MESSAGE, null, setOnTop);
+    }
+
+    public static void showExceptionBox(Exception e, boolean setOnTop)
+    {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter, true);
+
+        e.printStackTrace(printWriter);
+
+        String message = stringWriter.getBuffer().toString();
+        showExceptionBox(message, setOnTop);
+
+        printWriter.close();
     }
 }

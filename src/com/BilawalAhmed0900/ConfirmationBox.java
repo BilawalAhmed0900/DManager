@@ -1,13 +1,10 @@
 package com.BilawalAhmed0900;
 
-import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.lang.reflect.InvocationTargetException;
 
 public class ConfirmationBox
 {
@@ -18,7 +15,7 @@ public class ConfirmationBox
 
     private static final String DOWNLOAD_DIRECTORY = System.getProperty("user.home") + File.separator + "Downloads";
 
-    public ConfirmationBox(String url, String fileName, long contentLength, boolean isVideo, boolean isAudio)
+    public ConfirmationBox(String url, String fileName, long contentLength, boolean isVideo, boolean isAudio, boolean isExecutable)
     {
         this.url = url;
         if (isVideo)
@@ -28,6 +25,10 @@ public class ConfirmationBox
         else if (isAudio)
         {
             this.fileName = DOWNLOAD_DIRECTORY + File.separator + "Music" + File.separator + fileName;
+        }
+        else if (isExecutable)
+        {
+            this.fileName = DOWNLOAD_DIRECTORY + File.separator + "Programs" + File.separator + fileName;
         }
         else
         {
@@ -51,7 +52,7 @@ public class ConfirmationBox
 
 
     /*
-        First row of the GUI
+        First row of the DownloaderGUI
      */
         JLabel urlLabel = new JLabel("URL: ");
         JTextField urlField = new JTextField(55);
@@ -66,7 +67,7 @@ public class ConfirmationBox
 
 
     /*
-        Second row of the GUI
+        Second row of the DownloaderGUI
      */
         JLabel filenameLabel = new JLabel("Filename: ");
         JButton browseButton = new JButton("Browse...");
@@ -74,17 +75,16 @@ public class ConfirmationBox
         filenameField.setText(fileName);
 
         browseButton.addActionListener(e ->
-                SwingUtilities.invokeLater(() ->
-                {
-                    JFileChooser jFileChooser = new JFileChooser(DOWNLOAD_DIRECTORY);
-                    jFileChooser.setSelectedFile(new File(filenameField.getText()));
+       {
+           JFileChooser jFileChooser = new JFileChooser(DOWNLOAD_DIRECTORY);
+           jFileChooser.setSelectedFile(new File(filenameField.getText()));
 
-                    int result = jFileChooser.showSaveDialog(jFrame);
-                    if (result == JFileChooser.APPROVE_OPTION)
-                    {
-                        filenameField.setText(jFileChooser.getSelectedFile().getAbsolutePath());
-                    }
-                }));
+           int result = jFileChooser.showSaveDialog(jFrame);
+           if (result == JFileChooser.APPROVE_OPTION)
+           {
+               filenameField.setText(jFileChooser.getSelectedFile().getAbsolutePath());
+           }
+       });
 
         filenameLabel.setBounds(10, 40, 80, 15);
         filenameField.setBounds(90, 38, 385, 19);
@@ -96,7 +96,7 @@ public class ConfirmationBox
 
 
     /*
-        Third row of the GUI
+        Third row of the DownloaderGUI
      */
         JButton downloadButton = new JButton(((contentLength != -1)
                                              ? String.format("Download: %s", BytesToMiBGiBTiB.normalize(contentLength, 2))
@@ -106,12 +106,10 @@ public class ConfirmationBox
             File file = new File(filenameField.getText()).getParentFile();
             if (file != null)
             {
+                file.mkdirs();
                 if (file.isDirectory() && file.canRead() && file.canWrite())
                 {
-                    synchronized (lock)
-                    {
-                        SwingUtilities.invokeLater(() -> jFrame.setVisible(false));
-                    }
+                    jFrame.setVisible(false);
 
                     returnStructure.code = ReturnCode.OK;
                     returnStructure.path = filenameField.getText();
@@ -120,7 +118,7 @@ public class ConfirmationBox
                 {
                     JOptionPaneWithFrame.showExceptionBox("Not enough permission to read/write: "
                                                                   + filenameField.getText(),
-                                                          false);
+                                                          true);
 
                 }
             }
@@ -128,7 +126,7 @@ public class ConfirmationBox
             {
                 JOptionPaneWithFrame.showExceptionBox("No parent directory for "
                                                               + filenameField.getText(),
-                                                      false);
+                                                      true);
             }
 
 
@@ -143,15 +141,33 @@ public class ConfirmationBox
         }
         jPanel.add(downloadButton);
 
-        jPanel.setVisible(true);
+        try
+        {
+            SwingUtilities.invokeAndWait(() -> jPanel.setVisible(true));
+        }
+        catch (InterruptedException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
         jFrame.add(jPanel);
 
-        // jFrame.pack();
-        jFrame.setLocationRelativeTo(null);
-
         jFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        jFrame.setVisible(true);
-        jFrame.getRootPane().setDefaultButton(downloadButton);
+
+        try
+        {
+            SwingUtilities.invokeAndWait(() ->
+             {
+                 jFrame.setLocationRelativeTo(null);
+                 jFrame.setVisible(true);
+                 jFrame.getRootPane().setDefaultButton(downloadButton);
+             });
+        }
+        catch (InterruptedException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
+
+
 
     /*
         When "X" button on top-right/left is clicked
@@ -204,7 +220,15 @@ public class ConfirmationBox
             e.printStackTrace();
         }
 
-        jFrame.dispose();
+        try
+        {
+            SwingUtilities.invokeAndWait(jFrame::dispose);
+        }
+        catch (InterruptedException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
+
         return returnStructure;
     }
 }

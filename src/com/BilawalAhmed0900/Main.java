@@ -1,6 +1,7 @@
 package com.BilawalAhmed0900;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.*;
 import java.security.KeyManagementException;
@@ -24,18 +25,18 @@ public class Main
         /*
             Turning off HTTPS SSL security
          */
-        /*try
+        try
         {
             HttpsURLConnection.setDefaultSSLSocketFactory(RelaxedSSLContext.getInstance().getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(RelaxedSSLContext.allHostsValid);
 
-            System.setProperty("jsse.enableSNIExtension", "false");
+            // System.setProperty("jsse.enableSNIExtension", "false");
         }
         catch (KeyManagementException | NoSuchAlgorithmException e)
         {
             JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
             return;
-        }*/
+        }
 
         /*
             A Socket sever to allow extension to get attached as a client
@@ -65,7 +66,7 @@ public class Main
         }
         catch (IOException e)
         {
-            JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
+            JOptionPaneWithFrame.showExceptionBox(e, false);
         }
     }
 }

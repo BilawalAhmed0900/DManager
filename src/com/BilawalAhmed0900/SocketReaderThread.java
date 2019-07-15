@@ -27,8 +27,8 @@ public class SocketReaderThread extends Thread
                 break;
             }
 
-            DownloaderThread downloaderThread = new DownloaderThread(readString);
-            downloaderThread.start();
+            UrlConnectionThread urlConnectionThread = new UrlConnectionThread(readString);
+            urlConnectionThread.start();
         }
 
         System.out.println("Socket reader thread ended...");

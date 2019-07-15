@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /*
     A Thread class which downloads from a HttpUrlConnection and updates to AtomicLong how much has been read
  */
-public class DownloadGUIThread extends Thread
+public class DownloaderBackendThread extends Thread
 {
     private String filename;
     private HttpURLConnection urlConnection;
@@ -17,8 +17,8 @@ public class DownloadGUIThread extends Thread
     private volatile boolean running = true;
     private final int BUFFER_SIZE = 65536;
 
-    public DownloadGUIThread(String filename, HttpURLConnection urlConnection,
-                             AtomicLong downloaded, AtomicBoolean hasCompleted)
+    public DownloaderBackendThread(String filename, HttpURLConnection urlConnection,
+                                   AtomicLong downloaded, AtomicBoolean hasCompleted)
     {
         this.filename = filename;
         this.urlConnection = urlConnection;
@@ -44,7 +44,7 @@ public class DownloadGUIThread extends Thread
                 }
 
                 fileOutputStream.write(buffer, 0, read);
-                downloaded.addAndGet(read);
+                new Thread(() -> downloaded.addAndGet(read)).start();
             }
         }
         catch (FileNotFoundException e)
