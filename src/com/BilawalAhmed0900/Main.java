@@ -25,7 +25,7 @@ public class Main
         /*
             Turning off HTTPS SSL security
          */
-        try
+        /*try
         {
             HttpsURLConnection.setDefaultSSLSocketFactory(RelaxedSSLContext.getInstance().getSocketFactory());
             HttpsURLConnection.setDefaultHostnameVerifier(RelaxedSSLContext.allHostsValid);
@@ -36,7 +36,7 @@ public class Main
         {
             JOptionPaneWithFrame.showExceptionBox(e.getMessage(), false);
             return;
-        }
+        }*/
 
         /*
             A Socket sever to allow extension to get attached as a client

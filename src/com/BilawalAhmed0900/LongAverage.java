@@ -1,7 +1,6 @@
 package com.BilawalAhmed0900;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.stream.LongStream;
 
@@ -45,9 +44,9 @@ public class LongAverage
     public BigDecimal average(RoundingMode roundingMode)
     {
         if (addedTill == 0)
-            return new BigDecimal(new BigInteger("0"));
+            return BigDecimal.ZERO;
 
-        BigDecimal bigDecimal = new BigDecimal(new BigInteger("0"));
+        BigDecimal bigDecimal = BigDecimal.ZERO;
         for (long e: values)
         {
             bigDecimal = bigDecimal.add(BigDecimal.valueOf(e));
@@ -58,7 +57,7 @@ public class LongAverage
 
     public BigDecimal average()
     {
-        return average(RoundingMode.CEILING);
+        return average(RoundingMode.HALF_EVEN);
     }
 
     public double averageDouble()

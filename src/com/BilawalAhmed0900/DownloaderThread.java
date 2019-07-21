@@ -178,28 +178,33 @@ class DownloaderGUI extends Thread
                 {
                     final long fileSizeCompleted = previousDownloaded;
                     SwingUtilities.invokeAndWait(() ->
-                     jTextArea.setText(" URL:          " + url + "\n" +
-                                               " Filename:     " + filename + "\n" +
-                                               " File size:    " + BytesToMiBGiBTiB.normalize(fileSizeCompleted, 3) + "\n" +
-                                               " Joined:       " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
-                                               " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "100.00%")));
+                     jTextArea.setText(
+                       " URL:          " + url + "\n" +
+                       " Filename:     " + filename + "\n" +
+                       " File size:    " + BytesToMiBGiBTiB.normalize(fileSizeCompleted, 3) + "\n" +
+                       " Joined:       " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "\n" +
+                       " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "100.00%")
+                                      ));
 
                 }
                 else
                 {
                     elapsedTime = System.nanoTime() - previousTime;
                     currentDownloaded = downloaded.get() - previousDownloaded;
-                    final long currentSpeed = currentDownloaded * 1_000_000_000 / elapsedTime;
-                    longAverage.put(currentSpeed);
+                    longAverage.put(currentDownloaded * 1_000_000_000 / elapsedTime);
 
-                    SwingUtilities.invokeAndWait(() ->
-                     jTextArea.setText(" URL:          " + url + "\n" +
-                                               " Filename:     " + filename + "\n" +
-                                               " File size:    " + filesizeString + "\n" +
-                                               " Downloaded:   " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "(" + BytesToMiBGiBTiB.normalize(longAverage.averageLong(), 0) + "/s)" + "\n" +
-                                               " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "0.00%")));
                     previousTime = System.nanoTime();
                     previousDownloaded = downloaded.get();
+
+                    SwingUtilities.invokeAndWait(() ->
+                     jTextArea.setText(
+                       " URL:          " + url + "\n" +
+                       " Filename:     " + filename + "\n" +
+                       " File size:    " + filesizeString + "\n" +
+                       " Downloaded:   " + BytesToMiBGiBTiB.normalize(downloaded.get(), 3) + "(" + BytesToMiBGiBTiB.normalize(longAverage.averageLong(), 0) + "/s)" + "\n" +
+                       " Progress:     " + ((filesize != -1) ? String.format("%.2f%%", progressValue) : "0.00%")
+                                      ));
+
                 }
             }
             catch (InterruptedException | InvocationTargetException e)

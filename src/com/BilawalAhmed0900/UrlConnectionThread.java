@@ -28,7 +28,7 @@ public class UrlConnectionThread extends Thread
     /*
         The very first connection to open. Other may even not open depending upon how many server can give us
      */
-    private List<HttpURLConnection> openMainConnection(String url, String cookieString)
+    private List<HttpURLConnection> openMainConnection(String url, String cookieString, String userAgent)
     {
         final int MAX_URL_LENGTH_TO_SHOW = 70;
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(MAX_CONNECTION));
@@ -37,6 +37,7 @@ public class UrlConnectionThread extends Thread
             URL url1 = new URL(url);
             HttpURLConnection httpURLConnection = (HttpURLConnection)url1.openConnection();
             httpURLConnection.addRequestProperty("Cookie", cookieString);
+            httpURLConnection.setRequestProperty("User-Agent", userAgent);
             httpURLConnection.setReadTimeout(60 * 1000);
             httpURLConnection.connect();
 
@@ -107,7 +108,7 @@ public class UrlConnectionThread extends Thread
     /*
         Try to open as many HttpUrlConnection to a Url as possible, up to 8
      */
-    private List<HttpURLConnection> openLinks(String url, String cookieString)
+    private List<HttpURLConnection> openLinks(String url, String cookieString, String userAgent)
     {
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(MAX_CONNECTION));
         for (int i = 0; i < MAX_CONNECTION; i++)
@@ -116,6 +117,7 @@ public class UrlConnectionThread extends Thread
             {
                 URL url1 = new URL(url);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url1.openConnection();
+                httpURLConnection.setRequestProperty("User-Agent", userAgent);
                 httpURLConnection.addRequestProperty("Cookie", cookieString);
                 httpURLConnection.setReadTimeout(60 * 1000);
                 httpURLConnection.connect();
@@ -147,7 +149,8 @@ public class UrlConnectionThread extends Thread
     /*
         Open `totalLinks` seeked `Range=` HttpUrlConnection on a Url
      */
-    private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, long contentLength, int totalLinks)
+    private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, String userAgent,
+                                                     long contentLength, int totalLinks)
     {
         long chunkSize = contentLength / totalLinks;
         List<HttpURLConnection> result = Collections.synchronizedList(new ArrayList<>(totalLinks));
@@ -168,6 +171,7 @@ public class UrlConnectionThread extends Thread
                     rangeString = String.format("%d-%d", chunkSize * i, (chunkSize * (i + 1)) - 1);
                 }
 
+                httpURLConnection.setRequestProperty("User-Agent", userAgent);
                 httpURLConnection.addRequestProperty("Range", "bytes=" + rangeString);
                 httpURLConnection.addRequestProperty("Cookie", cookieString);
                 httpURLConnection.setReadTimeout(60 * 1000);
@@ -234,11 +238,12 @@ public class UrlConnectionThread extends Thread
             {
                 if (matcher.group(2).endsWith("\""))
                 {
-                    map.put(matcher.group(1), matcher.group(2).substring(0, matcher.group(2).length() - 1));
+                    map.put(matcher.group(1), matcher.group(2).substring(0, matcher.group(2).length() - 1)
+                            .replace("__COMMA__", ","));
                 }
                 else
                 {
-                    map.put(matcher.group(1), matcher.group(2));
+                    map.put(matcher.group(1), matcher.group(2).replace("__COMMA__", ","));
                 }
 
             }
@@ -250,7 +255,7 @@ public class UrlConnectionThread extends Thread
             Firefox sends redirected Url in url while chrome in finalUrl
          */
         String finalURL = (map.get("finalUrl").equals("")) ? map.get("url") : map.get("finalUrl");
-        List<HttpURLConnection> arrayList = openMainConnection(finalURL, map.get("cookies"));
+        List<HttpURLConnection> arrayList = openMainConnection(finalURL, map.get("cookies"), map.get("userAgent"));
         if (arrayList == null)
         {
             return;
@@ -301,7 +306,7 @@ public class UrlConnectionThread extends Thread
 
         /*
             totalContentLength == -1 for unknown size
-            Even if filesize is less than 1MB, only use first connection
+            Even if fileSize is less than 1MB, only use first connection
 
             Only opens more connection if Accept-Ranges is sent by server and it is equal to "bytes"
             Some server sends "Start" instead
@@ -313,7 +318,7 @@ public class UrlConnectionThread extends Thread
         {
             WaitingBox waitingBox = new WaitingBox("Connecting to " + arrayList.get(0).getURL().toString(),
                     "Establishing connection to the server", 500, 100);
-            List<HttpURLConnection> seekAbleList = openLinks(finalURL, map.get("cookies"));
+            List<HttpURLConnection> seekAbleList = openLinks(finalURL, map.get("cookies"), map.get("userAgent"));
             if (seekAbleList.size() != 0)
             {
                 long contentLength = seekAbleList.get(0).getContentLengthLong();
@@ -326,7 +331,8 @@ public class UrlConnectionThread extends Thread
                 seekAbleList.clear();
 
                 waitingBox.setNewMessage("Seeking on the server");
-                seekAbleList = openLinksAndSeek(finalURL, map.get("cookies"), contentLength, totalListLength);
+                seekAbleList = openLinksAndSeek(finalURL, map.get("cookies"), map.get("userAgent"),
+                                                contentLength, totalListLength);
 
                 if (seekAbleList != null)
                 {
@@ -345,9 +351,8 @@ public class UrlConnectionThread extends Thread
                     }
                     arrayList = arrayList.subList(0, 1);
                 }
-
-                waitingBox.dispose();
             }
+            waitingBox.dispose();
         }
 
         System.out.println("Started downloading...");
