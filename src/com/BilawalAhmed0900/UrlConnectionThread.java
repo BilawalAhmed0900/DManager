@@ -22,7 +22,7 @@ public class UrlConnectionThread extends Thread
     public UrlConnectionThread(String cookieString)
     {
         this.cookieString = cookieString;
-        map = new HashMap<>(8);
+        map = new HashMap<>(9);
     }
 
     /*
@@ -69,11 +69,26 @@ public class UrlConnectionThread extends Thread
      */
     private String getFileName(HttpURLConnection urlConnection)
     {
+        boolean isVideoOrAudio = false;
         String contentDisposition = urlConnection.getHeaderField("Content-Disposition");
-        if (contentDisposition != null)
+        String contentType = urlConnection.getHeaderField("Content-Type");
+        if (contentType.contains("video/") || contentType.contains("audio/"))
+            isVideoOrAudio = true;
+
+        /*
+            First check for Content-Disposition
+
+            Its syntax is either
+
+            attachment; filename=""
+                or
+            attachment; filename=
+         */
+        if (contentDisposition != null && contentDisposition.startsWith("attachment;"))
         {
             Pattern pattern = Pattern.compile("filename=\"(.*?)\"");
             Matcher matcher = pattern.matcher(contentDisposition);
+            String extension = isVideoOrAudio ? "." + contentType.substring(6) : "";
             if (matcher.find())
             {
                 /*
@@ -81,21 +96,35 @@ public class UrlConnectionThread extends Thread
 
                     Example.server/File.ext
                  */
-                String fileName = matcher.group(1);
+                String fileName = URLDecoder.decode(matcher.group(1), StandardCharsets.UTF_8);
                 int position = fileName.lastIndexOf("/");
-                if (position == -1) return fileName;
+                if (position == -1) return fileName + extension;
 
-                return fileName.substring(position + 1);
+                return fileName.substring(position + 1) + extension;
             }
+
+            pattern = Pattern.compile("filename=(.*)");
+            matcher = pattern.matcher(contentDisposition);
+            if (matcher.find())
+            {
+                String fileName = URLDecoder.decode(matcher.group(1), StandardCharsets.UTF_8);
+                int position = fileName.lastIndexOf("/");
+                if (position == -1) return fileName + extension;
+
+                return fileName.substring(position + 1) + extension;
+            }
+
         }
 
+        /*
+            Otherwise get it from URL link
+            while cutting of any
+            FILENAME?arg=...&arg2=...
+         */
         String url = urlConnection.getURL().toString();
         int position = url.lastIndexOf("/");
 
-        int positionAnd = url.indexOf("&", position);
-        int positionQuestionMark = url.indexOf("?", position);
-
-        int tillPosition = Math.min(positionAnd, positionQuestionMark);
+        int tillPosition = url.indexOf("?", position);
         if (tillPosition == -1 || tillPosition <= position)
             tillPosition = url.length();
 
@@ -116,10 +145,12 @@ public class UrlConnectionThread extends Thread
             try
             {
                 URL url1 = new URL(url);
+
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url1.openConnection();
                 httpURLConnection.setRequestProperty("User-Agent", userAgent);
                 httpURLConnection.addRequestProperty("Cookie", cookieString);
                 httpURLConnection.setReadTimeout(60 * 1000);
+
                 httpURLConnection.connect();
 
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK)
@@ -147,7 +178,7 @@ public class UrlConnectionThread extends Thread
     }
 
     /*
-        Open `totalLinks` seeked `Range=` HttpUrlConnection on a Url
+        Open `totalLinks` seek-ed `Range=` HttpUrlConnection on a Url
      */
     private List<HttpURLConnection> openLinksAndSeek(String url, String cookieString, String userAgent,
                                                      long contentLength, int totalLinks)
@@ -263,6 +294,7 @@ public class UrlConnectionThread extends Thread
 
         long totalContentLength = arrayList.get(0).getContentLengthLong();
         String fileName = getFileName(arrayList.get(0));
+        System.out.println(fileName);
         boolean isAudio = true;
         if (map.get("isAudio").equals("false"))
         {

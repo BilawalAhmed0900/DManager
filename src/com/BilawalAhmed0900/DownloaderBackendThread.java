@@ -35,7 +35,7 @@ public class DownloaderBackendThread extends Thread
             InputStream connectionStream = urlConnection.getInputStream();
 
             byte[] buffer = new byte[BUFFER_SIZE];
-            while (running)
+            while (running && hasCompleted.get())
             {
                 int read = connectionStream.read(buffer);
                 if (read == -1)
